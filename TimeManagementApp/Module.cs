@@ -6,79 +6,41 @@ using System.Linq;
 
 namespace TimeManagementApp
 {
-    class Module
+    public class Module
     {
-        private string code;
-        private string name;
-        private int credits;
-        private int classHoursPW;
-        private int weeksInSemester;
-        private DateTime startDate;
-        private double selfStudyHoursPW;
-        public List<StudyTimeRecord> StudyTimeRecord { get; set; } = new List<StudyTimeRecord>();
-        public string Code
+        public string Code { get; private set; }
+        public string Name { get; private set; }
+        public int Credits { get; private set; }
+        public int ClassHoursPW { get; private set; }
+        public int WeeksInSemester { get; private set; }
+        public DateTime StartDate { get; private set; }
+        public List<StudyTimeRecord> StudyTimeRecords { get; private set; }
+
+        // Constructor
+        public Module(string code, string name, int credits, int classHoursPW, int weeksInSemester, DateTime startDate)
         {
-            get { return code; }
-            set { code = value; }
+            Code = code;
+            Name = name;
+            Credits = credits;
+            ClassHoursPW = classHoursPW;
+            WeeksInSemester = weeksInSemester;
+            StartDate = startDate;
+            StudyTimeRecords = new List<StudyTimeRecord>();
         }
 
-        public string Name
-        {
-            get { return name; }
-            set { name = value; }
-        }
-
-        public int Credits
-        {
-            get { return credits; }
-            set { credits = value; }
-        }
-
-        public int ClassHoursPW
-        {
-            get { return classHoursPW; }
-            set { classHoursPW = value; }
-        }
-
-        public int WeeksInSemester
-        {
-            get { return weeksInSemester; }
-            set { weeksInSemester = value; }
-        }
-
-        public DateTime StartDate
-        {
-            get { return startDate; }
-            set { startDate = value; }
-        }
-
-        public double SelfStudyHoursPerWeek
-        {
-            get
-            {
-                selfStudyHoursPW = (Credits * 10.0 / WeeksInSemester) -ClassHoursPW;
-                return Math.Round(selfStudyHoursPW, 2);
-            }
-        }
-
+        // Method to calculate remaining study hours
         public double CalcRemainingStudyHours()
         {
-            DateTime currentDate = DateTime.Now;
-            int currentWeekNumber = CultureInfo.CurrentCulture.Calendar.GetWeekOfYear(currentDate, CalendarWeekRule.FirstDay, DayOfWeek.Sunday);
+            double selfStudyHours = (Credits / 10.0 / WeeksInSemester) - ClassHoursPW;
+            double totalHoursSpent = 0;
 
-            double totalSelfStudyHours = (Credits * 10.0 / WeeksInSemester) - ClassHoursPW;
-            double recordedHoursForCurrentWeek = StudyTimeRecord
-                .Where(record => CultureInfo.CurrentCulture.Calendar.GetWeekOfYear(record.StudyDate, CalendarWeekRule.FirstDay, DayOfWeek.Sunday) == currentWeekNumber)
-                .Sum(record => record.HoursSpent);
+            foreach (var record in StudyTimeRecords)
+            {
+                totalHoursSpent += record.HoursSpent;
+            }
 
-            return totalSelfStudyHours - recordedHoursForCurrentWeek;
-        }
-
-        public double RemainingSelfStudyHours
-        {
-            get { return CalcRemainingStudyHours(); }
+            return selfStudyHours - totalHoursSpent;
         }
     }
-
 
 }

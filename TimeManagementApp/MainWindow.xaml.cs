@@ -38,7 +38,7 @@ namespace TimeManagementApp
             string code = txtCode.Text;
             string name = txtName.Text;
 
-            //Validate input is number value
+            // Validate input is number value
             if (!int.TryParse(txtCredits.Text, out int credits))
             {
                 MessageBox.Show("Please enter a valid number of credits.");
@@ -54,19 +54,11 @@ namespace TimeManagementApp
                 MessageBox.Show("Please enter a valid number of weeks in the semester.");
                 return;
             }
-            //Get Selected Date
+            // Get Selected Date
             DateTime startDate = dpStartDate.SelectedDate ?? DateTime.MinValue;
 
-            // Create a new module object
-            Module newModule = new Module
-            {
-                Code = code,
-                Name = name,
-                Credits = credits,
-                ClassHoursPW = classHoursPW,
-                WeeksInSemester = weeksInSemester,
-                StartDate = startDate
-            };
+            // Create a new module object using the constructor
+            Module newModule = new Module(code, name, credits, classHoursPW, weeksInSemester, startDate);
 
             // Add the module to the list
             modules.Add(newModule);
@@ -80,11 +72,11 @@ namespace TimeManagementApp
             dpStartDate.SelectedDate = null;
 
             // Update the ListView
+            lstModules.ItemsSource = null; // Reset the ItemsSource to refresh
             lstModules.ItemsSource = modules;
 
             UpdateSelfStudyHours();
         }
-
         private void RecordStudyHours_Click(object sender, RoutedEventArgs e)
         {
             if (lstModules.SelectedItem is Module selectedModule)
@@ -104,14 +96,15 @@ namespace TimeManagementApp
                     };
 
                     // Add the study record to the selected module
-                    selectedModule.StudyTimeRecord.Add(studyTimeRecord);
+                    selectedModule.StudyTimeRecords.Add(studyTimeRecord);
 
                     // Clear input fields
                     txtStudyHours.Clear();
                     dpStudyDate.SelectedDate = null;
 
                     // Update the ListView
-                    lstStudyRecords.ItemsSource = selectedModule.StudyTimeRecord;
+                    lstStudyRecords.ItemsSource = null; 
+                    lstStudyRecords.ItemsSource = selectedModule.StudyTimeRecords; 
                     UpdateSelfStudyHours();
                 }
                 else
@@ -124,7 +117,6 @@ namespace TimeManagementApp
                 MessageBox.Show("Please select a module to record study hours.");
             }
         }
-
         private void UpdateSelfStudyHours()
         {
             foreach (var module in modules)

@@ -5,13 +5,6 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
-using System.Windows.Shapes;
 
 namespace TimeManagementApp
 {
@@ -72,7 +65,7 @@ namespace TimeManagementApp
             dpStartDate.SelectedDate = null;
 
             // Update the ListView
-            lstModules.ItemsSource = null; // Reset the ItemsSource to refresh
+            lstModules.ItemsSource = null; 
             lstModules.ItemsSource = modules;
 
             UpdateSelfStudyHours();
@@ -124,7 +117,7 @@ namespace TimeManagementApp
                 module.CalcRemainingStudyHours();
             }
 
-            lstModules.Items.Refresh(); // Refresh the ListView to update the display
+        
         }
 
 

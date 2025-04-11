@@ -14,6 +14,7 @@ namespace TimeManagementApp
         public int ClassHoursPW { get; private set; }
         public int WeeksInSemester { get; private set; }
         public DateTime StartDate { get; private set; }
+        public double SelfStudyHoursPerWeek { get; private set; }
         public List<StudyTimeRecord> StudyTimeRecords { get; private set; }
 
         // Constructor
@@ -26,12 +27,12 @@ namespace TimeManagementApp
             WeeksInSemester = weeksInSemester;
             StartDate = startDate;
             StudyTimeRecords = new List<StudyTimeRecord>();
+            SelfStudyHoursPerWeek = Math.Round(((Credits * 10.0)/WeeksInSemester) - ClassHoursPW, 2);
         }
-
         // Method to calculate remaining study hours
         public double CalcRemainingStudyHours()
         {
-            double selfStudyHours = (Credits / 10.0 / WeeksInSemester) - ClassHoursPW;
+           // double selfStudyHours = (Credits / 10.0 / WeeksInSemester) - ClassHoursPW;
             double totalHoursSpent = 0;
 
             foreach (var record in StudyTimeRecords)
@@ -39,7 +40,7 @@ namespace TimeManagementApp
                 totalHoursSpent += record.HoursSpent;
             }
 
-            return selfStudyHours - totalHoursSpent;
+            return SelfStudyHoursPerWeek - totalHoursSpent;
         }
     }
 

@@ -29,19 +29,21 @@ namespace TimeManagementApp
             StudyTimeRecords = new List<StudyTimeRecord>();
             SelfStudyHoursPerWeek = Math.Round(((Credits * 10.0)/WeeksInSemester) - ClassHoursPW, 2);
         }
+
         // Method to calculate remaining study hours
-        public double CalcRemainingStudyHours()
+        public double RemainingSelfStudyHoursThisWeek
         {
-           // double selfStudyHours = (Credits / 10.0 / WeeksInSemester) - ClassHoursPW;
-            double totalHoursSpent = 0;
-
-            foreach (var record in StudyTimeRecords)
+            get
             {
-                totalHoursSpent += record.HoursSpent;
-            }
+                DateTime startOfWeek = DateTime.Today.AddDays(-(int)DateTime.Today.DayOfWeek + (int)DayOfWeek.Monday);
+                DateTime endOfWeek = startOfWeek.AddDays(7);
 
-            return SelfStudyHoursPerWeek - totalHoursSpent;
+                double hoursSpentThisWeek = StudyTimeRecords                  
+                    .Sum(r => r.HoursSpent);
+
+                double remaining = SelfStudyHoursPerWeek - hoursSpentThisWeek;
+                return Math.Round(Math.Max(0, remaining), 2); 
+            }
         }
     }
-
 }

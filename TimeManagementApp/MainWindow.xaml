@@ -5,8 +5,8 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:TimeManagementApp"
         mc:Ignorable="d"
-        Title="MainWindow" Height="800" Width="1000">
-    <Grid Margin="0,0,0,0">
+        Title="MainWindow" Height="800" Width="1200">
+    <Grid Margin="0,0,-155,0">
         <Label Content="Module Code:" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="20,20,0,0"/>
         <TextBox x:Name="txtCode" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="150,20,0,0" Width="200"/>
 
@@ -36,6 +36,9 @@
                     <GridViewColumn Header="# of Weeks In Semester" Width="160" DisplayMemberBinding="{Binding WeeksInSemester}"/>
                     <GridViewColumn Header="Date of Start of Semester" Width="150" DisplayMemberBinding="{Binding StartDate}"/>
                     <GridViewColumn Header="Self-Study Hours/Week" Width="150" DisplayMemberBinding="{Binding SelfStudyHoursPerWeek}"/>
+                    <GridViewColumn Header="Remaining Study Hours (This Week)" Width="200"
+                DisplayMemberBinding="{Binding RemainingSelfStudyHoursThisWeek}" />
+
                 </GridView>
             </ListView.View>
         </ListView>
@@ -51,7 +54,7 @@
         <ListView x:Name="lstStudyRecords" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="20,530,20,20">
             <ListView.View>
                 <GridView>
-                    <GridViewColumn Header="Date" Width="120" DisplayMemberBinding="{Binding Date}"/>
+                    <GridViewColumn Header="Date" Width="120" DisplayMemberBinding="{Binding StudyDate}"/>
                     <GridViewColumn Header="Hours Spent" Width="120" DisplayMemberBinding="{Binding HoursSpent}"/>
                 </GridView>
             </ListView.View>

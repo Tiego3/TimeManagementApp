@@ -18,7 +18,7 @@ namespace TimeManagementApp
         public MainWindow()
         {
             InitializeComponent();
-            UpdateSelfStudyHours();
+           
         }
 
         private void moduleListView_SelectionChanged(object sender, SelectionChangedEventArgs e)
@@ -67,9 +67,8 @@ namespace TimeManagementApp
             // Update the ListView
             lstModules.ItemsSource = null; 
             lstModules.ItemsSource = modules;
-
-            UpdateSelfStudyHours();
         }
+
         private void RecordStudyHours_Click(object sender, RoutedEventArgs e)
         {
             if (lstModules.SelectedItem is Module selectedModule)
@@ -96,9 +95,8 @@ namespace TimeManagementApp
                     dpStudyDate.SelectedDate = null;
 
                     // Update the ListView
-                    lstStudyRecords.ItemsSource = null; 
-                    lstStudyRecords.ItemsSource = selectedModule.StudyTimeRecords; 
-                    UpdateSelfStudyHours();
+                   lstStudyRecords.ItemsSource = null; 
+                   lstStudyRecords.ItemsSource = selectedModule.StudyTimeRecords;                  
                 }
                 else
                 {
@@ -109,17 +107,9 @@ namespace TimeManagementApp
             {
                 MessageBox.Show("Please select a module to record study hours.");
             }
-        }
-        private void UpdateSelfStudyHours()
-        {
-            foreach (var module in modules)
-            {
-                module.CalcRemainingStudyHours();
-            }
+            lstModules.Items.Refresh();
 
+        }
         
-        }
-
-
     }
 }

@@ -9,4 +9,5 @@ namespace TimeManagementApp
         public DateTime StudyDate { get; set; }
         public double HoursSpent { get; set; }
     }
+
 }

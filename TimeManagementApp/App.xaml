@@ -4,6 +4,6 @@
              xmlns:local="clr-namespace:TimeManagementApp"
              StartupUri="MainWindow.xaml">
     <Application.Resources>
-         
+        <vm:MainViewModel x:Key="MainViewModel" />
     </Application.Resources>
 </Application>

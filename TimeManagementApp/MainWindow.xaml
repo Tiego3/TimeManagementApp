@@ -5,7 +5,8 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:TimeManagementApp"
         mc:Ignorable="d"
-        Title="MainWindow" Height="800" Width="1200">
+        Title="MainWindow" Height="800" Width="1200"
+        DataContext="{StaticResource MainViewModel}">
     <Grid Margin="0,0,-155,0">
         <Label Content="Module Code:" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="20,20,0,0"/>
         <TextBox x:Name="txtCode" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="150,20,0,0" Width="200"/>
@@ -26,7 +27,7 @@
         <DatePicker x:Name="dpStartDate" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="20,251,0,0" Width="150" RenderTransformOrigin="1.264,0.911"/>
 
         <Button Content="Add Module" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="20,298,0,0" Width="100" Click="AddModule_Click"/>
-        <ListView x:Name="lstModules" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="20,345,0,0">
+        <ListView ItemsSource="{Binding Modules}" DisplayMemberPath="Name" x:Name="lstModules" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="20,345,0,0">
             <ListView.View>
                 <GridView>
                     <GridViewColumn Header="Code" Width="80" DisplayMemberBinding="{Binding Code}"/>

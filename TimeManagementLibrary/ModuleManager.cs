@@ -7,10 +7,10 @@ using System.Threading.Tasks;
 namespace TimeManagementLibrary
 {
     // Manages a collection of modules and provides operations on them.
-    internal class ModuleManager
+    public class ModuleManager
     {
         // Adds a new module to the collection.
-        private List<Module> modules = new List<Module>();       
+        public List<Module> modules = new List<Module>();       
         public void AddModule(Module module)
         {
             modules.Add(module);

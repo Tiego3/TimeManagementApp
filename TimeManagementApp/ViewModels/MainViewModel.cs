@@ -11,7 +11,7 @@ namespace TimeManagementApp.ViewModels
     {
         public ObservableCollection<Module> Modules { get; set; } = new ObservableCollection<Module>();
 
-        private ModuleManager _manager = new ModuleManager();
+        public ModuleManager _manager = new ModuleManager();
 
         private int _totalStudyHours;
         public int TotalStudyHours

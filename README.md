@@ -8,20 +8,19 @@ A WPF application to help students manage their study time effectively. Built wi
 
 ## 📁 Project Structure
 
-TimeManagementApp/
-│
-├── TimeManagementApp/ # WPF Application
-│ ├── ViewModels/ # MVVM ViewModel layer
-│ ├── Views/ # XAML Views (e.g., MainWindow.xaml)
-│ ├── Commands/ # ICommand implementations
-│ └── App.xaml / MainWindow.xaml
-│
-├── TimeManagementLibrary/ # Core logic and model definitions
-│ └── Module.cs
-│ └── StudyTimeRecord.cs
-│
-├── TimeManagementApp.sln
-└── README.md
+TimeManagementApp
+ |_ TimeManagementApp/ # WPF Application
+ |_ViewModels/ # MVVM ViewModel layer
+ |_Views/ # XAML Views (e.g., MainWindow.xaml)
+ |_Commands/ # ICommand implementations
+ |_App.xaml / MainWindow.xaml
+
+TimeManagementLibrary/ # Core logic and model definitions
+  |_Module.cs
+  |_StudyTimeRecord.cs
+
+TimeManagementApp.sln
+README.md
 
 ---
 
@@ -60,12 +59,11 @@ TimeManagementApp/
 ### Steps
 
 1. **Clone the repository**
- ```bash
+  ```bash
  git clone https://github.com/your-username/TimeManagementApp.git
 
 2. Open the solution in Visual Studio
   TimeManagementApp.sln
-
 3. Build and run the project
 
 

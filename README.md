@@ -66,6 +66,12 @@ README.md
   TimeManagementApp.sln
 3. Build and run the project
 
+## 📌 TODO / Improvements
+- Persist data to a database or file (e.g., SQLite or JSON)
+- Add user authentication
+
+
+
 
 
   

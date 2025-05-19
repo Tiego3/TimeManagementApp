@@ -1,10 +1,12 @@
 ﻿using System;
-using System.Collections.Generic;
+using System.Collections.ObjectModel;
+using System.ComponentModel;
 using System.Linq;
+using System.Runtime.CompilerServices;
 
 namespace TimeManagementLibrary
 {
-    public class Module
+    public class Module : INotifyPropertyChanged
     {
         public string Code { get; set; } = string.Empty;
         public string Name { get; set; } = string.Empty;
@@ -12,15 +14,31 @@ namespace TimeManagementLibrary
         public int ClassHoursPW { get; set; }
         public int WeeksInSemester { get; set; }
         public DateTime StartDate { get; set; }
-        public double SelfStudyHoursPerWeek { get; set; }
-        public List<StudyTimeRecord> StudyTimeRecords { get; set; }
+
+        private double _selfStudyHoursPerWeek;
+        public double SelfStudyHoursPerWeek
+        {
+            get => _selfStudyHoursPerWeek;
+            private set
+            {
+                _selfStudyHoursPerWeek = value;
+                OnPropertyChanged();
+            }
+        }
+
+        public ObservableCollection<StudyTimeRecord> StudyTimeRecords { get; set; }
 
         public Module()
         {
-            StudyTimeRecords = new List<StudyTimeRecord>();
+            StudyTimeRecords = new ObservableCollection<StudyTimeRecord>();
+            StudyTimeRecords.CollectionChanged += (s, e) =>
+            {
+                OnPropertyChanged(nameof(RemainingSelfStudyHoursThisWeek));
+            };
         }
 
         public Module(string code, string name, int credits, int classHoursPW, int weeksInSemester, DateTime startDate)
+            : this()
         {
             Code = code;
             Name = name;
@@ -28,29 +46,47 @@ namespace TimeManagementLibrary
             ClassHoursPW = classHoursPW;
             WeeksInSemester = weeksInSemester;
             StartDate = startDate;
-            StudyTimeRecords = new List<StudyTimeRecord>();
+            CalculateSelfStudyHoursPerWeek();
+        }
+
+        public void CalculateSelfStudyHoursPerWeek()
+        {
             SelfStudyHoursPerWeek = Math.Round(((Credits * 10.0) / WeeksInSemester) - ClassHoursPW, 2);
         }
 
-        public int CalculateStudyHours()
-        {
-            return Credits * 10;
-        }
+        public int CalculateTotalStudyHours() => Credits * 10;
 
         public double RemainingSelfStudyHoursThisWeek
         {
             get
             {
-                DateTime startOfWeek = DateTime.Today.AddDays(-(int)DateTime.Today.DayOfWeek + (int)DayOfWeek.Monday);
-                DateTime endOfWeek = startOfWeek.AddDays(7);
+                var currentWeekStart = GetStartOfCurrentWeek();
+                var currentWeekEnd = currentWeekStart.AddDays(7);
 
-                double hoursSpentThisWeek = StudyTimeRecords
-                    .Where(r => r.StudyDate >= startOfWeek && r.StudyDate < endOfWeek)
+                double hoursLoggedThisWeek = StudyTimeRecords
+                    .Where(r => r.StudyDate >= currentWeekStart && r.StudyDate < currentWeekEnd)
                     .Sum(r => r.HoursSpent);
 
-                double remaining = SelfStudyHoursPerWeek - hoursSpentThisWeek;
+                double remaining = SelfStudyHoursPerWeek - hoursLoggedThisWeek;
                 return Math.Round(Math.Max(0, remaining), 2);
             }
         }
+
+        private DateTime GetStartOfCurrentWeek()
+        {
+            var today = DateTime.Today;
+            var daysSinceMonday = ((int)today.DayOfWeek + 6) % 7; // Ensure Monday = 0
+            return today.AddDays(-daysSinceMonday);
+        }
+
+        public void AddStudyRecord(DateTime studyDate, double hours)
+        {
+            StudyTimeRecords.Add(new StudyTimeRecord { StudyDate = studyDate, HoursSpent = hours });
+            OnPropertyChanged(nameof(RemainingSelfStudyHoursThisWeek));
+        }
+
+        public event PropertyChangedEventHandler? PropertyChanged;
+        protected void OnPropertyChanged([CallerMemberName] string propertyName = "")
+            => PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
     }
 }

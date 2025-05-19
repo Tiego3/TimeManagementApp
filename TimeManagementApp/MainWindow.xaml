@@ -1,92 +1,118 @@
 ﻿<Window x:Class="TimeManagementApp.MainWindow"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:vm="clr-namespace:TimeManagementApp.ViewModels"
-        Title="Time Management App" Height="600" Width="800">
+        mc:Ignorable="d"
+        Title="Time Management App" Height="600" Width="900">
+
     <Window.DataContext>
         <vm:MainViewModel />
     </Window.DataContext>
 
-    <Grid Margin="10">
+    <Grid Margin="15">
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto"/>
-            <RowDefinition Height="4*"/>
+            <RowDefinition Height="*"/>
             <RowDefinition Height="Auto"/>
-            <RowDefinition Height="2*"/>
         </Grid.RowDefinitions>
 
-        <!-- Add Module Section -->
-        <GroupBox Header="Add Module" Grid.Row="0" Margin="0,0,0,10">
-            <StackPanel Orientation="Horizontal" VerticalAlignment="Center" Margin="10">
-                <StackPanel Margin="5">
-                    <TextBlock Text="Code" />
-                    <TextBox Width="80" Text="{Binding NewModuleCode, UpdateSourceTrigger=PropertyChanged}" />
-                </StackPanel>
-                <StackPanel Margin="5">
-                    <TextBlock Text="Name" />
-                    <TextBox Width="120" Text="{Binding NewModuleName, UpdateSourceTrigger=PropertyChanged}" />
-                </StackPanel>
-                <StackPanel Margin="5">
-                    <TextBlock Text="Credits" />
-                    <TextBox Width="60" Text="{Binding NewModuleCredits, UpdateSourceTrigger=PropertyChanged}" />
-                </StackPanel>
-                <StackPanel Margin="5">
-                    <TextBlock Text="Class Hrs/Week" />
-                    <TextBox Width="60" Text="{Binding NewModuleClassHours, UpdateSourceTrigger=PropertyChanged}" />
-                </StackPanel>
-                <StackPanel Margin="5">
-                    <TextBlock Text="Weeks" />
-                    <TextBox Width="60" Text="{Binding NewModuleWeeks, UpdateSourceTrigger=PropertyChanged}" />
-                </StackPanel>
-                <StackPanel Margin="5">
-                    <TextBlock Text="Start Date" />
-                    <DatePicker Width="130" SelectedDate="{Binding NewModuleStartDate}" />
-                </StackPanel>
-                <Button Content="Add" Margin="5,20,5,0" Command="{Binding AddModuleCommand}" />
-            </StackPanel>
+        <!-- Section: Add Module -->
+        <GroupBox Header="Add Module" Grid.Row="0" Padding="10" Margin="0,0,0,10">
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="Auto"/>
+                    <ColumnDefinition Width="150"/>
+                    <ColumnDefinition Width="Auto"/>
+                    <ColumnDefinition Width="150"/>
+                    <ColumnDefinition Width="Auto"/>
+                    <ColumnDefinition Width="100"/>
+                    <ColumnDefinition Width="Auto"/>
+                    <ColumnDefinition Width="100"/>
+                    <ColumnDefinition Width="Auto"/>
+                    <ColumnDefinition Width="100"/>
+                    <ColumnDefinition Width="Auto"/>
+                    <ColumnDefinition Width="150"/>
+                    <ColumnDefinition Width="Auto"/>
+                </Grid.ColumnDefinitions>
+
+                <!-- Code -->
+                <TextBlock Text="Code:" VerticalAlignment="Center" Margin="5"/>
+                <TextBox Grid.Column="1" Text="{Binding NewModuleCode, UpdateSourceTrigger=PropertyChanged}" Margin="5"/>
+
+                <!-- Name -->
+                <TextBlock Grid.Column="2" Text="Name:" VerticalAlignment="Center" Margin="5"/>
+                <TextBox Grid.Column="3" Text="{Binding NewModuleName, UpdateSourceTrigger=PropertyChanged}" Margin="5"/>
+
+                <!-- Credits -->
+                <TextBlock Grid.Column="4" Text="Credits:" VerticalAlignment="Center" Margin="5"/>
+                <TextBox Grid.Column="5" Text="{Binding NewModuleCredits, UpdateSourceTrigger=PropertyChanged}" Margin="5" TextChanged="TextBox_TextChanged"/>
+
+                <!-- Class Hours -->
+                <TextBlock Grid.Column="6" Text="Class Hours:" VerticalAlignment="Center" Margin="5"/>
+                <TextBox Grid.Column="7" Text="{Binding NewModuleClassHours, UpdateSourceTrigger=PropertyChanged}" Margin="5"/>
+
+                <!-- Weeks -->
+                <TextBlock Grid.Column="8" Text="Weeks:" VerticalAlignment="Center" Margin="5"/>
+                <TextBox Grid.Column="9" Text="{Binding NewModuleWeeks, UpdateSourceTrigger=PropertyChanged}" Margin="5"/>
+
+                <!-- Start Date -->
+                <TextBlock Grid.Column="10" Text="Start Date:" VerticalAlignment="Center" Margin="5"/>
+                <DatePicker Grid.Column="11" SelectedDate="{Binding NewModuleStartDate}" Margin="5"/>
+
+                <!-- Button -->
+                <Button Grid.Column="12" Content="Add" Command="{Binding AddModuleCommand}" Margin="10,0"/>
+            </Grid>
         </GroupBox>
 
-        <!-- Modules List -->
-        <GroupBox Header="Modules" Grid.Row="1" Margin="0,0,0,10">
-            <ListView ItemsSource="{Binding Modules}" SelectedItem="{Binding SelectedModule}" Margin="10">
+        <!-- Section: Module List -->
+        <GroupBox Header="Modules Overview" Grid.Row="1" Padding="10" Margin="0,0,0,10">
+            <ListView ItemsSource="{Binding Modules}">
                 <ListView.View>
                     <GridView>
-                        <GridViewColumn Header="Code" DisplayMemberBinding="{Binding Code}" Width="60"/>
-                        <GridViewColumn Header="Name" DisplayMemberBinding="{Binding Name}" Width="100"/>
+                        <GridViewColumn Header="Code" DisplayMemberBinding="{Binding Code}" />
+                        <GridViewColumn Header="Name" DisplayMemberBinding="{Binding Name}" Width="160"/>
                         <GridViewColumn Header="Credits" DisplayMemberBinding="{Binding Credits}" Width="60"/>
                         <GridViewColumn Header="Class Hours" DisplayMemberBinding="{Binding ClassHoursPW}" Width="80"/>
                         <GridViewColumn Header="Self-Study/Week" DisplayMemberBinding="{Binding SelfStudyHoursPerWeek}" Width="100"/>
-                        <GridViewColumn Header="Remaining This Week" DisplayMemberBinding="{Binding RemainingSelfStudyHoursThisWeek}" Width="120"/>
+                        <GridViewColumn Header="Remaining This Week" DisplayMemberBinding="{Binding RemainingSelfStudyHoursThisWeek}" Width="130"/>
                     </GridView>
                 </ListView.View>
             </ListView>
         </GroupBox>
 
-        <!-- Record Study Time Section -->
-        <GroupBox Header="Record Study Time" Grid.Row="2" Margin="0,0,0,10">
-            <StackPanel Orientation="Horizontal" VerticalAlignment="Center" Margin="10">
-                <StackPanel Margin="5">
-                    <TextBlock Text="Hours Studied" />
-                    <TextBox Width="100" Text="{Binding NewStudyHours, UpdateSourceTrigger=PropertyChanged}" />
-                </StackPanel>
-                <StackPanel Margin="5">
-                    <TextBlock Text="Study Date" />
-                    <DatePicker Width="140" SelectedDate="{Binding NewStudyDate}" />
-                </StackPanel>
-                <Button Content="Record" Margin="5,20,5,0" Command="{Binding RecordStudyCommand}" />
-            </StackPanel>
-        </GroupBox>
+        <!-- Section: Record Study Hours -->
+        <GroupBox Header="Record Study Hours" Grid.Row="2" Padding="10">
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="Auto"/>
+                    <ColumnDefinition Width="150"/>
+                    <ColumnDefinition Width="Auto"/>
+                    <ColumnDefinition Width="150"/>
+                    <ColumnDefinition Width="Auto"/>
+                    <ColumnDefinition Width="100"/>
+                    <ColumnDefinition Width="Auto"/>
+                </Grid.ColumnDefinitions>
 
-        <!-- Study Records -->
-        <GroupBox Header="Study Records" Grid.Row="3">
-            <ListView ItemsSource="{Binding SelectedModule.StudyTimeRecords}" Margin="10">
-                <ListView.View>
-                    <GridView>
-                        <GridViewColumn Header="Date" DisplayMemberBinding="{Binding StudyDate}" Width="150"/>
-                        <GridViewColumn Header="Hours" DisplayMemberBinding="{Binding HoursSpent}" Width="100"/>
-                    </GridView>
-                </ListView.View>
-            </ListView>
+                <!-- Module -->
+                <TextBlock Text="Module:" VerticalAlignment="Center" Margin="5"/>
+                <ComboBox Grid.Column="1" ItemsSource="{Binding Modules}"
+                          DisplayMemberPath="Code"
+                          SelectedValuePath="Code"
+                          SelectedValue="{Binding SelectedModuleCode}" Margin="5"/>
+
+                <!-- Date -->
+                <TextBlock Grid.Column="2" Text="Date:" VerticalAlignment="Center" Margin="5"/>
+                <DatePicker Grid.Column="3" SelectedDate="{Binding StudyDate}" Margin="5"/>
+
+                <!-- Hours -->
+                <TextBlock Grid.Column="4" Text="Hours:" VerticalAlignment="Center" Margin="5"/>
+                <TextBox Grid.Column="5" Text="{Binding HoursSpent, UpdateSourceTrigger=PropertyChanged}" Margin="5"/>
+
+                <!-- Button -->
+                <Button Grid.Column="6" Content="Record" Command="{Binding AddStudyHoursCommand}" Margin="10,0"/>
+            </Grid>
         </GroupBox>
     </Grid>
 </Window>

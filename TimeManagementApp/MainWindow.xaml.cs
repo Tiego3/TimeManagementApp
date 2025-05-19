@@ -29,6 +29,11 @@ namespace TimeManagementApp
         {
 
         }
+
+        private void TextBox_TextChanged(object sender, TextChangedEventArgs e)
+        {
+
+        }
         //private void AddModule_Click(object sender, RoutedEventArgs e)
         //{
         //    // Get module details from input fields
@@ -114,6 +119,6 @@ namespace TimeManagementApp
         //    lstModules.Items.Refresh();
 
         //}
-        
+
     }
 }

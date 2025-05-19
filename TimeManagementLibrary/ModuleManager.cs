@@ -1,37 +1,42 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace TimeManagementLibrary
 {
-    // Manages a collection of modules and provides operations on them.
     public class ModuleManager
     {
-        // Adds a new module to the collection.
-        public List<Module> modules = new List<Module>();       
+        private readonly List<Module> modules = new();
+
         public void AddModule(Module module)
         {
             modules.Add(module);
         }
-        
-        // Retrieves all modules.
+
         public List<Module> GetAllModules()
         {
             return modules;
         }
-       
-        // Calculates the total study hours for all modules.
+
         public int CalculateTotalStudyHours()
         {
-            return modules.Sum(m => m.CalculateStudyHours());
+            return modules.Sum(m => m.CalculateTotalStudyHours());
         }
 
-        // Finds modules with credits above a specified threshold.
         public List<Module> GetModulesAboveCreditThreshold(int threshold)
         {
             return modules.Where(m => m.Credits > threshold).ToList();
+        }
+
+        public Module? GetModuleByCode(string code)
+        {
+            return modules.FirstOrDefault(m => m.Code.Equals(code, StringComparison.OrdinalIgnoreCase));
+        }
+
+        public void AddStudyTimeToModule(string code, DateTime date, double hours)
+        {
+            var module = GetModuleByCode(code);
+            module?.AddStudyRecord(date, hours);
         }
     }
 }

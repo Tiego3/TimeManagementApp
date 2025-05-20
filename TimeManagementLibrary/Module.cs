@@ -14,7 +14,13 @@ namespace TimeManagementLibrary
         public int ClassHoursPW { get; set; }
         public int WeeksInSemester { get; set; }
         public DateTime StartDate { get; set; }
+        public int Id { get; set; }
+        // Existing properties...
 
+        public int UserId { get; set; }
+        public User User { get; set; }
+
+       // public ICollection<StudyTimeRecord> StudyTimeRecords { get; set; }
         private double _selfStudyHoursPerWeek;
         public double SelfStudyHoursPerWeek
         {

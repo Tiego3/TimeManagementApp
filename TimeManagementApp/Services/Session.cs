@@ -10,6 +10,8 @@ namespace TimeManagementApp.Services
 {
     public static class Session
     {
+        public static int CurrentUserId { get; set; }
+
         public static User CurrentUser { get; set; }
     }
 }

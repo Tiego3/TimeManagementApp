@@ -1,51 +1,45 @@
-﻿using System.Data;
-using System.Threading.Tasks;
-using Dapper;
-using Microsoft.Data.Sqlite;
-using BCrypt.Net;
+﻿using System;
+using System.Linq;
+using System.Security.Cryptography;
+using System.Text;
+using TimeManagementLibrary;
 
 namespace TimeManagementApp.Services
 {
     public class UserService
     {
-        private readonly string _connectionString = "Data Source=TimeManagement.db";
+        private readonly TimeManagementDbContext _context = new();
 
-        public async Task<bool> RegisterUserAsync(string username, string password)
+        public bool RegisterUser(string username, string password)
         {
-            using IDbConnection db = new SqliteConnection(_connectionString);
-
-            var existingUser = await db.QueryFirstOrDefaultAsync<string>(
-                "SELECT Username FROM Users WHERE Username = @Username", new { Username = username });
-
-            if (existingUser != null)
+            if (_context.Users.Any(u => u.Username == username))
                 return false;
 
-            var hashedPassword = BCrypt.Net.BCrypt.HashPassword(password);
+            var hashed = HashPassword(password);
 
-            await db.ExecuteAsync("INSERT INTO Users (Username, PasswordHash) VALUES (@Username, @PasswordHash)",
-                new { Username = username, PasswordHash = hashedPassword });
+            var user = new User
+            {
+                Username = username,
+                PasswordHash = hashed
+            };
 
+            _context.Users.Add(user);
+            _context.SaveChanges();
             return true;
         }
 
-        public async Task<int?> AuthenticateUserAsync(string username, string password)
+        public User? AuthenticateUser(string username, string password)
         {
-            using IDbConnection db = new SqliteConnection(_connectionString);
-
-            var user = await db.QueryFirstOrDefaultAsync<UserDto>(
-                "SELECT Id, PasswordHash FROM Users WHERE Username = @Username",
-                new { Username = username });
-
-            if (user != null && BCrypt.Net.BCrypt.Verify(password, user.PasswordHash))
-                return user.Id;
-
-            return null;
+            var hashed = HashPassword(password);
+            return _context.Users.FirstOrDefault(u => u.Username == username && u.PasswordHash == hashed);
         }
 
-        private class UserDto
+        private string HashPassword(string password)
         {
-            public int Id { get; set; }
-            public string PasswordHash { get; set; }
+            using var sha256 = SHA256.Create();
+            var bytes = Encoding.UTF8.GetBytes(password);
+            var hash = sha256.ComputeHash(bytes);
+            return Convert.ToBase64String(hash);
         }
     }
 }

@@ -1,83 +1,42 @@
-﻿using System;
-using System.ComponentModel;
+﻿using System.ComponentModel;
 using System.Runtime.CompilerServices;
-using System.Windows;
-using System.Windows.Input;
-using TimeManagementApp.Commands;
 using TimeManagementApp.Services;
-using TimeManagementApp.Views;
-
+using TimeManagementLibrary;
 
 namespace TimeManagementApp.ViewModels
 {
     public class LoginViewModel : INotifyPropertyChanged
     {
-        private string _username;
-        private string _password;
+        private readonly UserService _userService = new();
+        private string _errorMessage;
 
-        public string Username
+        public string ErrorMessage
         {
-            get => _username;
-            set { _username = value; OnPropertyChanged(); }
-        }
-
-        public string Password
-        {
-            get => _password;
-            set { _password = value; OnPropertyChanged(); }
-        }
-
-        public ICommand LoginCommand { get; }
-        public ICommand NavigateToRegisterCommand { get; }
-
-        private readonly UserService _userService;
-
-        public LoginViewModel()
-        {
-            _userService = new UserService();
-
-            LoginCommand = new RelayCommand(ExecuteLogin, CanLogin);
-            NavigateToRegisterCommand = new RelayCommand(OpenRegisterWindow);
-        }
-
-        private bool CanLogin(object parameter) =>
-            !string.IsNullOrWhiteSpace(Username) && !string.IsNullOrWhiteSpace(Password);
-
-        private async void ExecuteLogin(object parameter)
-        {
-            try
+            get => _errorMessage;
+            set
             {
-                var userId = await _userService.AuthenticateUserAsync(Username, Password);
-
-                if (userId.HasValue)
-                {
-                    // Set the session user ID
-                    Session.CurrentUserId = userId.Value;
-
-                    var mainWindow = new MainWindow();
-                    Application.Current.Windows[0]?.Close(); // Close LoginWindow
-                    mainWindow.Show();
-                }
-                else
-                {
-                    MessageBox.Show("Invalid username or password.", "Login Failed", MessageBoxButton.OK, MessageBoxImage.Warning);
-                }
-            }
-            catch (Exception ex)
-            {
-                MessageBox.Show($"An error occurred: {ex.Message}", "Login Error", MessageBoxButton.OK, MessageBoxImage.Error);
+                _errorMessage = value;
+                OnPropertyChanged();
             }
         }
 
-        private void OpenRegisterWindow(object parameter)
+        public bool Login(string username, string password)
         {
-            var registerWindow = new RegisterWindow();
-            Application.Current.Windows[0]?.Close(); // Close LoginWindow
-            registerWindow.Show();
+            var user = _userService.AuthenticateUser(username, password);
+
+            if (user != null)
+            {
+                // Save current user if needed
+                ErrorMessage = string.Empty;
+                return true;
+            }
+
+            ErrorMessage = "Invalid username or password.";
+            return false;
         }
 
-        public event PropertyChangedEventHandler PropertyChanged;
-        protected void OnPropertyChanged([CallerMemberName] string name = null) =>
-            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(name));
+        public event PropertyChangedEventHandler? PropertyChanged;
+        protected void OnPropertyChanged([CallerMemberName] string propertyName = "")
+            => PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
     }
 }

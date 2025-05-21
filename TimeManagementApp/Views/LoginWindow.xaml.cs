@@ -1,50 +1,37 @@
-﻿using System;
-using System.Windows;
+﻿using System.Windows;
 using System.Windows.Controls;
-using TimeManagementApp.Services;
-using TimeManagementLibrary;
 using TimeManagementApp.ViewModels;
 
 namespace TimeManagementApp.Views
-{ 
-
+{
     public partial class LoginWindow : Window
     {
-        private readonly AuthService _authService;
-
         public LoginWindow()
         {
             InitializeComponent();
-            _authService = new AuthService(new TimeManagementDbContext());
         }
 
-        private async void Login_Click(object sender, RoutedEventArgs e)
+        private void LoginButton_Click(object sender, RoutedEventArgs e)
         {
-            var username = UsernameBox.Text;
-            var password = PasswordBox.Password;
+            string username = UsernameBox.Text;
+            string password = PasswordBox.Password;
 
-            var user = await _authService.LoginAsync(username, password);
-            if (user != null)
+            if (DataContext is LoginViewModel vm)
             {
-                Session.CurrentUser = user;
-                var mainWindow = new MainWindow();
-                mainWindow.Show();
-                Close();
-            }
-            else
-            {
-                MessageBox.Show("Invalid login credentials.");
-            }
-        }
+                bool loginSuccess = vm.Login(username, password);
 
-        private void PasswordBox_PasswordChanged(object sender, RoutedEventArgs e)
-        {
-            if (DataContext is LoginViewModel viewModel)
-            {
-                viewModel.Password = ((PasswordBox)sender).Password;
+                if (loginSuccess)
+                {
+                    MessageBox.Show("Login successful!");
+                    // Navigate to MainWindow or dashboard here
+                    this.DialogResult = true;
+                    this.Close();
+                }
+                else
+                {
+                    MessageBox.Show("Invalid username or password.");
+                }
             }
         }
-
     }
-
 }

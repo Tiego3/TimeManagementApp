@@ -5,8 +5,7 @@ using System.Security.Cryptography;
 using System.Text;
 using System;
 using TimeManagementApp.Commands;
-using TimeManagementLibrary;
-using TimeManagementApp.Service;
+using TimeManagementApp.Services;
 
 
 

@@ -8,11 +8,11 @@ using System.Text;
 using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
 using TimeManagementLibrary;
-using TimeManagementApp.Service;
+using TimeManagementApp.Services;
 
 
 
-namespace TimeManagementApp.Service
+namespace TimeManagementApp.Services
 {
     
     public class AuthService

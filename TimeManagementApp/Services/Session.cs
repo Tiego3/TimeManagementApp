@@ -3,8 +3,10 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using TimeManagementLibrary;
 
-namespace TimeManagementLibrary
+
+namespace TimeManagementApp.Services
 {
     public static class Session
     {

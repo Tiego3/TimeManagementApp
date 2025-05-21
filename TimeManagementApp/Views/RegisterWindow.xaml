@@ -3,9 +3,7 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:vm="clr-namespace:TimeManagementApp.ViewModels"
         Title="Register" Height="300" Width="400">
-    <Window.DataContext>
-        <vm:RegisterViewModel/>
-    </Window.DataContext>
+    
 
     <Grid Margin="20">
         <Grid.RowDefinitions>

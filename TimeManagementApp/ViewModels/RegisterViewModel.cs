@@ -1,72 +1,52 @@
-﻿using System.ComponentModel;
+﻿using System;
+using System.ComponentModel;
 using System.Runtime.CompilerServices;
+using System.Windows;
 using System.Windows.Input;
-using System.Security.Cryptography;
-using System.Text;
-using System;
+using Microsoft.EntityFrameworkCore;
 using TimeManagementApp.Commands;
 using TimeManagementApp.Services;
-
-
+using TimeManagementLibrary;
+using TimeManagementLibrary.Services;
 
 namespace TimeManagementApp.ViewModels
 {
     public class RegisterViewModel : INotifyPropertyChanged
     {
-        private string _username;
-        private string _password;
-        private string _statusMessage;
+        public event PropertyChangedEventHandler PropertyChanged;
 
-        public string Username
-        {
-            get => _username;
-            set { _username = value; OnPropertyChanged(); }
-        }
-
-        public string Password
-        {
-            get => _password;
-            set { _password = value; OnPropertyChanged(); }
-        }
-
-        public string StatusMessage
-        {
-            get => _statusMessage;
-            set { _statusMessage = value; OnPropertyChanged(); }
-        }
+        public string Username { get; set; }
+        public Func<string> PasswordAccessor { get; set; }
 
         public ICommand RegisterCommand { get; }
 
+        private readonly AuthService _authService;
+
         public RegisterViewModel()
         {
-            RegisterCommand = new RelayCommand(RegisterUser);
+            var options = new DbContextOptionsBuilder<TimeManagementDbContext>()
+                .UseSqlServer("your_connection_string_here")
+                .Options;
+
+            _authService = new AuthService(new TimeManagementDbContext(options));
+            RegisterCommand = new RelayCommand(Register);
         }
 
-        private void RegisterUser(object obj)
+        private void Register(object obj)
         {
-            if (string.IsNullOrWhiteSpace(Username) || string.IsNullOrWhiteSpace(Password))
+            string password = PasswordAccessor?.Invoke();
+
+            if (_authService.Register(Username, password))
             {
-                StatusMessage = "Please enter a username and password.";
-                return;
+                MessageBox.Show("Registration successful!");
             }
-
-            string hashedPassword = HashPassword(Password);
-
-            // Store to DB (call service or directly use EF Core)
-            bool result = UserService.RegisterUser(Username, hashedPassword);
-
-            StatusMessage = result ? "Registration successful." : "Username already exists.";
+            else
+            {
+                MessageBox.Show("Username already exists.");
+            }
         }
 
-        private string HashPassword(string password)
-        {
-            using SHA256 sha = SHA256.Create();
-            byte[] hash = sha.ComputeHash(Encoding.UTF8.GetBytes(password));
-            return Convert.ToBase64String(hash);
-        }
-
-        public event PropertyChangedEventHandler PropertyChanged;
-        protected void OnPropertyChanged([CallerMemberName] string name = "")
-            => PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(name));
+        private void OnPropertyChanged(string prop) =>
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(prop));
     }
 }

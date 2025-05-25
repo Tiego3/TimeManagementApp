@@ -4,6 +4,8 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
+using TimeManagementApp.Models;
+using TimeManagementLibrary.Models;
 
 namespace TimeManagementLibrary
 {
@@ -11,29 +13,51 @@ namespace TimeManagementLibrary
     {
         public DbSet<User> Users { get; set; }
         public DbSet<Module> Modules { get; set; }
-        public DbSet<StudyTimeRecord> StudyTimeRecords { get; set; }
+        public DbSet<StudySession> StudySessions { get; set; }
+        public DbSet<Semester> Semesters { get; set; }
 
-        protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
+        public TimeManagementDbContext(DbContextOptions<TimeManagementDbContext> options)
+            : base(options)
         {
-            optionsBuilder.UseSqlServer("Data Source=(localdb)\\ProjectModels;Initial Catalog=TimeManagementDB;Integrated Security=True;Connect Timeout=30;Encrypt=False;Trust Server Certificate=False;Application Intent=ReadWrite;Multi Subnet Failover=False");
         }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
+            // USER
             modelBuilder.Entity<User>()
                 .HasIndex(u => u.Username)
-                .IsUnique();
+                .IsUnique(); // Ensure usernames are unique
 
+            // MODULE
             modelBuilder.Entity<Module>()
                 .HasOne(m => m.User)
                 .WithMany(u => u.Modules)
-                .HasForeignKey(m => m.UserId);
+                .HasForeignKey(m => m.UserId)
+                .OnDelete(DeleteBehavior.Cascade); // Delete modules if user is deleted
 
-            modelBuilder.Entity<StudyTimeRecord>()
+            // STUDY SESSION
+            modelBuilder.Entity<StudySession>()
+                .HasOne(s => s.User)
+                .WithMany(u => u.StudySessions)
+                .HasForeignKey(s => s.UserId)
+                .OnDelete(DeleteBehavior.Cascade);
+
+            modelBuilder.Entity<StudySession>()
                 .HasOne(s => s.Module)
-                .WithMany(m => m.StudyTimeRecords)
-                .HasForeignKey(s => s.ModuleId);
+                .WithMany()
+                .HasForeignKey(s => s.ModuleId)
+                .OnDelete(DeleteBehavior.Cascade);
+
+            // SEMESTER
+            modelBuilder.Entity<Semester>()
+                .HasOne(s => s.User)
+                .WithMany()
+                .HasForeignKey(s => s.UserId)
+                .OnDelete(DeleteBehavior.Cascade);
+
+            base.OnModelCreating(modelBuilder);
         }
+
     }
 
 }

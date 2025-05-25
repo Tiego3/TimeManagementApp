@@ -5,6 +5,7 @@ using System.Runtime.CompilerServices;
 using System.Windows.Input;
 using TimeManagementApp.Commands;
 using TimeManagementLibrary;
+using TimeManagementLibrary.Models;
 
 namespace TimeManagementApp.ViewModels
 {

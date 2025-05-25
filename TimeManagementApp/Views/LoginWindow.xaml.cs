@@ -9,29 +9,15 @@ namespace TimeManagementApp.Views
         public LoginWindow()
         {
             InitializeComponent();
+            var vm = new LoginViewModel();
+            this.DataContext = vm;
+            vm.PasswordAccessor = () => PasswordBox.Password;
         }
 
-        private void LoginButton_Click(object sender, RoutedEventArgs e)
+        private void PasswordBox_PasswordChanged(object sender, RoutedEventArgs e)
         {
-            string username = UsernameBox.Text;
-            string password = PasswordBox.Password;
-
-            if (DataContext is LoginViewModel vm)
-            {
-                bool loginSuccess = vm.Login(username, password);
-
-                if (loginSuccess)
-                {
-                    MessageBox.Show("Login successful!");
-                    // Navigate to MainWindow or dashboard here
-                    this.DialogResult = true;
-                    this.Close();
-                }
-                else
-                {
-                    MessageBox.Show("Invalid username or password.");
-                }
-            }
+            // No action needed unless you want live validation
         }
     }
+
 }

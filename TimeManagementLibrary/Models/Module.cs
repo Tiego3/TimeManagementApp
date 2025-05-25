@@ -3,8 +3,9 @@ using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Linq;
 using System.Runtime.CompilerServices;
+using TimeManagementApp.Models;
 
-namespace TimeManagementLibrary
+namespace TimeManagementLibrary.Models
 {
     public class Module : INotifyPropertyChanged
     {
@@ -57,7 +58,7 @@ namespace TimeManagementLibrary
 
         public void CalculateSelfStudyHoursPerWeek()
         {
-            SelfStudyHoursPerWeek = Math.Round(((Credits * 10.0) / WeeksInSemester) - ClassHoursPW, 2);
+            SelfStudyHoursPerWeek = Math.Round(Credits * 10.0 / WeeksInSemester - ClassHoursPW, 2);
         }
 
         public int CalculateTotalStudyHours() => Credits * 10;

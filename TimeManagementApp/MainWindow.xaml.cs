@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
 using TimeManagementLibrary;
+using TimeManagementLibrary.Models;
 
 namespace TimeManagementApp
 {

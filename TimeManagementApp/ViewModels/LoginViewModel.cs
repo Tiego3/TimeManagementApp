@@ -1,57 +1,42 @@
-﻿using System;
+﻿using System.Windows;
+using System.Windows.Input;
+using TimeManagementLibrary.Services;
+using TimeManagementApp.Models;
+using TimeManagementApp.Commands;
+using TimeManagementApp;
 using System.ComponentModel;
 using System.Runtime.CompilerServices;
-using System.Windows;
-using System.Windows.Input;
-using Microsoft.EntityFrameworkCore;
-using TimeManagementApp.Commands;
-using TimeManagementApp.Services;
-using TimeManagementApp.Views;
-using TimeManagementLibrary;
-using TimeManagementLibrary.Services;
 
 namespace TimeManagementApp.ViewModels
 {
+    // ViewModel for Login functionality
 
     public class LoginViewModel : INotifyPropertyChanged
     {
-        public event PropertyChangedEventHandler PropertyChanged;
+        private readonly AuthService _authService;
 
-        private string _username;
-        public string Username
-        {
-            get => _username;
-            set { _username = value; OnPropertyChanged(nameof(Username)); }
-        }
-
-        public Func<string> PasswordAccessor { get; set; }
+        //public string Username { get; set; }
 
         public ICommand LoginCommand { get; }
         public ICommand RegisterCommand { get; }
 
-        private readonly AuthService _authService;
-
-        public LoginViewModel()
+        public LoginViewModel(AuthService authService)
         {
-            var options = new DbContextOptionsBuilder<TimeManagementDbContext>()
-                .UseSqlServer("your_connection_string_here")
-                .Options;
-
-            _authService = new AuthService(new TimeManagementDbContext(options));
-
+            _authService = authService;
             LoginCommand = new RelayCommand(Login);
-            RegisterCommand = new RelayCommand(OpenRegister);
+            RegisterCommand = new RelayCommand(Register);
         }
 
-        private void Login(object obj)
+        private void Login(object passwordObj)
         {
-            string password = PasswordAccessor?.Invoke();
-
+            var password = passwordObj as string;
             var user = _authService.Login(Username, password);
+
             if (user != null)
             {
-                MessageBox.Show("Login successful.");
-                // Open main app window...
+                App.CurrentUser = user;
+                MessageBox.Show("Login successful!");
+                // Navigate to MainWindow
             }
             else
             {
@@ -59,15 +44,34 @@ namespace TimeManagementApp.ViewModels
             }
         }
 
-        private void OpenRegister(object obj)
+        private void Register(object passwordObj)
         {
-            var registerView = new RegisterWindow();
-            registerView.Show();
+            var password = passwordObj as string;
+            bool success = _authService.Register(Username, password);
+
+            if (success)
+                MessageBox.Show("Registration successful!");
+            else
+                MessageBox.Show("Username already taken.");
         }
 
-        private void OnPropertyChanged(string propName)
+        public event PropertyChangedEventHandler PropertyChanged;
+        private void OnPropertyChanged([CallerMemberName] string name = null)
         {
-            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propName));
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(name));
         }
+
+        private string _username;
+        public string Username
+        {
+            get => _username;
+            set
+            {
+                _username = value;
+                OnPropertyChanged();
+            }
+        }
+
+
     }
 }

@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.EntityFrameworkCore;
 using TimeManagementApp.Models;
 using TimeManagementLibrary.Models;
 
@@ -13,51 +8,38 @@ namespace TimeManagementLibrary
     {
         public DbSet<User> Users { get; set; }
         public DbSet<Module> Modules { get; set; }
-        public DbSet<StudySession> StudySessions { get; set; }
+        public DbSet<StudyTimeRecord> StudyTimeRecords { get; set; }
         public DbSet<Semester> Semesters { get; set; }
 
         public TimeManagementDbContext(DbContextOptions<TimeManagementDbContext> options)
-            : base(options)
-        {
-        }
+            : base(options) { }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
-            // USER
             modelBuilder.Entity<User>()
                 .HasIndex(u => u.Username)
-                .IsUnique(); // Ensure usernames are unique
+                .IsUnique();
 
-            // MODULE
-            modelBuilder.Entity<Module>()
-                .HasOne(m => m.User)
-                .WithMany(u => u.Modules)
+            modelBuilder.Entity<User>()
+                .HasMany(u => u.Modules)
+                .WithOne(m => m.User)
                 .HasForeignKey(m => m.UserId)
-                .OnDelete(DeleteBehavior.Cascade); // Delete modules if user is deleted
-
-            // STUDY SESSION
-            modelBuilder.Entity<StudySession>()
-                .HasOne(s => s.User)
-                .WithMany(u => u.StudySessions)
-                .HasForeignKey(s => s.UserId)
                 .OnDelete(DeleteBehavior.Cascade);
 
-            modelBuilder.Entity<StudySession>()
-                .HasOne(s => s.Module)
-                .WithMany()
+            modelBuilder.Entity<Module>()
+                .HasMany(m => m.StudyTimeRecords)
+                .WithOne(s => s.Module)
                 .HasForeignKey(s => s.ModuleId)
                 .OnDelete(DeleteBehavior.Cascade);
 
-            // SEMESTER
             modelBuilder.Entity<Semester>()
                 .HasOne(s => s.User)
-                .WithMany()
+                .WithMany(u => u.Semesters) // ✅ Plural form
                 .HasForeignKey(s => s.UserId)
                 .OnDelete(DeleteBehavior.Cascade);
 
+
             base.OnModelCreating(modelBuilder);
         }
-
     }
-
 }

@@ -39,5 +39,7 @@ namespace TimeManagementLibrary
             var module = GetModuleByCode(code);
             module?.AddStudyRecord(date, hours);
         }
+
+
     }
 }

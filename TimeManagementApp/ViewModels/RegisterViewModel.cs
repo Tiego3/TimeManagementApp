@@ -5,7 +5,6 @@ using System.Windows;
 using System.Windows.Input;
 using Microsoft.EntityFrameworkCore;
 using TimeManagementApp.Commands;
-using TimeManagementApp.Services;
 using TimeManagementLibrary;
 using TimeManagementLibrary.Services;
 

@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Microsoft.EntityFrameworkCore;
+using TimeManagementLibrary.Models;
 
 namespace TimeManagementLibrary.Services
 {
@@ -15,20 +17,32 @@ namespace TimeManagementLibrary.Services
             _context = context;
         }
 
-        public void AddModule(int userId, string code, string name, int credits, int classHoursPerWeek)
+        public List<Module> GetModulesForUser(int userId)
         {
-            var module = new Module
-            {
-                UserId = userId,
-                Code = code,
-                Name = name,
-                Credits = credits,
-                ClassHoursPerWeek = classHoursPerWeek
-            };
+            return _context.Modules
+                .Where(m => m.UserId == userId)
+                .ToList();
+        } 
+        public void AddStudyTime(int moduleId, DateTime date, double hours)
+        {
+            var module = _context.Modules
+                .Include(m => m.StudyTimeRecords)
+                .FirstOrDefault(m => m.Id == moduleId);
 
-            _context.Modules.Add(module);
+            if (module == null) return;
+
+            module.StudyTimeRecords.Add(new StudyTimeRecord
+            {
+                StudyDate = date,
+                HoursSpent = hours,
+                ModuleId = moduleId
+            });
+
             _context.SaveChanges();
         }
+
     }
 
-}
+
+
+    }

@@ -5,22 +5,20 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
+using TimeManagementApp.Models;
 using TimeManagementLibrary;
 using TimeManagementLibrary.Models;
 
 namespace TimeManagementApp
 {
-
-    // Interaction logic for MainWindow.xaml
-    // </summary>
     public partial class MainWindow : Window
     {
-        private List<Module> modules = new List<Module>();
-        private List<StudyTimeRecord> studyTimeRecord = new List<StudyTimeRecord>();
-        public MainWindow()
+        private readonly User _loggedInUser;
+
+        public MainWindow(User loggedInUser) // Fix: Corrected constructor signature
         {
-            InitializeComponent();
-            //this.DataContext = new MainViewModel();
+            InitializeComponent(); // Fix: Removed invalid parameter from InitializeComponent
+            _loggedInUser = loggedInUser; // Fix: Assign the passed parameter to the private field
         }
 
         private void moduleListView_SelectionChanged(object sender, SelectionChangedEventArgs e)

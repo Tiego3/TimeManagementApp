@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
 using TimeManagementApp.Models;
+using TimeManagementApp.ViewModels;
 using TimeManagementLibrary;
 using TimeManagementLibrary.Models;
 
@@ -13,30 +14,26 @@ namespace TimeManagementApp
 {
     public partial class MainWindow : Window
     {
-        private readonly User _loggedInUser;
-
-        public MainWindow(User loggedInUser) // Fix: Corrected constructor signature
+        public MainWindow(MainViewModel vm)
         {
-            InitializeComponent(); // Fix: Removed invalid parameter from InitializeComponent
-            _loggedInUser = loggedInUser; // Fix: Assign the passed parameter to the private field
+            InitializeComponent();
+            DataContext = vm;
         }
 
-        private void moduleListView_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        public void SetLoggedInUser(User user)
         {
-
-        }
-
-        private void TextBox_TextChanged(object sender, TextChangedEventArgs e)
-        {
-
+            if (DataContext is MainViewModel vm)
+            {
+                vm.SetUser(user);
+            }
         }
     }
 }
-        //private void AddModule_Click(object sender, RoutedEventArgs e)
-        //{
-        //    // Get module details from input fields
-        //    string code = txtCode.Text;
-        //    string name = txtName.Text;
+//private void AddModule_Click(object sender, RoutedEventArgs e)
+//{
+//    // Get module details from input fields
+//    string code = txtCode.Text;
+//    string name = txtName.Text;
 
 //    // Validate input is number value
 //    if (!int.TryParse(txtCredits.Text, out int credits))

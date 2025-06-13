@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Microsoft.EntityFrameworkCore;
 using TimeManagementApp.Models;
 using TimeManagementLibrary.Models;
 
@@ -10,37 +11,33 @@ namespace TimeManagementLibrary.Services
 {
     public class AuthService
     {
-        private readonly TimeManagementDbContext _context;
+        private readonly TimeManagementDbContext _db;
+        public AuthService(TimeManagementDbContext db) => _db = db;
 
-        public AuthService(TimeManagementDbContext context)
+        public async Task<bool> Register(string username, string password)
         {
-            _context = context;
-        }
+            if (await _db.Users.AnyAsync(u => u.Username == username))
+                return false;
 
-        public bool Register(string username, string password)
-        {
-            if (_context.Users.Any(u => u.Username == username))
-                return false; // Username taken
-
-            var user = new User
-            {
-                Username = username,
-                PasswordHash = BCrypt.Net.BCrypt.HashPassword(password)
-            };
-
-            _context.Users.Add(user);
-            _context.SaveChanges();
+            var user = new User { Username = username, PasswordHash = BCrypt.Net.BCrypt.HashPassword(password) };
+            user.Semester = new Semester { StartDate = DateTime.Today, NumberOfWeeks = 12 };
+            _db.Users.Add(user);
+            await _db.SaveChangesAsync();
             return true;
         }
 
-        public User Login(string username, string password)
+        public async Task<User?> Login(string username, string password)
         {
-            var user = _context.Users.FirstOrDefault(u => u.Username == username);
-            if (user != null && BCrypt.Net.BCrypt.Verify(password, user.PasswordHash))
-            {
-                return user;
-            }
-            return null;
+            var user = await _db.Users
+                .Include(u => u.Semester)
+                .ThenInclude(s => s.Modules)
+                .ThenInclude(m => m.StudyTimeRecords)
+                .SingleOrDefaultAsync(u => u.Username == username);
+
+            if (user is null || !BCrypt.Net.BCrypt.Verify(password, user.PasswordHash))
+                return null;
+
+            return user;
         }
     }
 

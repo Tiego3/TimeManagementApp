@@ -1,26 +1,40 @@
-﻿using System.ComponentModel;
-using System;
+﻿// RegisterWindow.xaml.cs
 using System.Windows;
-using System.Windows.Controls;
-using Microsoft.EntityFrameworkCore;
-using System.Windows.Input;
-using TimeManagementApp.Commands;
-using TimeManagementApp.ViewModels;
+using Microsoft.Extensions.DependencyInjection;
 using TimeManagementLibrary.Services;
-using TimeManagementLibrary;
 
 namespace TimeManagementApp.Views
 {
     public partial class RegisterWindow : Window
     {
-        public RegisterWindow()
+        private readonly AuthService _authService;
+        private App App => (App)Application.Current;
+
+        public RegisterWindow(AuthService authService)
         {
             InitializeComponent();
-            var vm = new RegisterViewModel();
-            this.DataContext = vm;
-            vm.PasswordAccessor = () => PasswordBox.Password;
+            _authService = authService;
         }
 
-        private void PasswordBox_PasswordChanged(object sender, RoutedEventArgs e) { }
+        private void PasswordBox_PasswordChanged(object sender, RoutedEventArgs e)
+        {
+            // no VM binding here
+        }
+
+        private async void Register_Click(object sender, RoutedEventArgs e)
+        {
+            string username = UsernameTextBox.Text;
+            string password = PasswordBox.Password;
+
+            bool success = await _authService.Register(username, password);
+            MessageBox.Show(success ? "Registered! You may now log in." : "Username already exists.");
+
+            if (success)
+            {
+                var login = App.Services.GetRequiredService<LoginWindow>();
+                login.Show();
+                Close();
+            }
+        }
     }
 }

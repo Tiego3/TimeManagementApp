@@ -1,4 +1,5 @@
-﻿<Window x:Class="TimeManagementApp.Views.RegisterWindow"
+﻿<!-- RegisterWindow.xaml -->
+<Window x:Class="TimeManagementApp.Views.RegisterWindow"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         Title="Register" Height="300" Width="400"
@@ -6,12 +7,11 @@
     <Grid Margin="20">
         <StackPanel>
             <TextBlock Text="New Username:" />
-            <TextBox Text="{Binding Username, UpdateSourceTrigger=PropertyChanged}" />
-
-            <TextBlock Text="New Password:" Margin="0 10 0 0"/>
+            <TextBox Name="UsernameTextBox" Margin="0,0,0,5"/>
+            <TextBlock Text="New Password:" Margin="0,10,0,0"/>
             <PasswordBox Name="PasswordBox" PasswordChanged="PasswordBox_PasswordChanged"/>
-
-            <Button Content="Register" Margin="0 20 0 0" Width="100" HorizontalAlignment="Center" Command="{Binding RegisterCommand}" />
+            <Button Content="Register" Margin="0,20,0,0" Width="100" HorizontalAlignment="Center"
+                    Click="Register_Click"/>
         </StackPanel>
     </Grid>
 </Window>

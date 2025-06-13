@@ -7,7 +7,6 @@ namespace TimeManagementApp
 {
     class ModuleCollection
     {
-        // ModuleCollection.cs
         public List<Module> Modules { get; set; }
 
         public ModuleCollection()

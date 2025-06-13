@@ -7,8 +7,7 @@ namespace TimeManagementLibrary.Models
         public int Id { get; set; }
         public DateTime StudyDate { get; set; }
         public double HoursSpent { get; set; }
-
         public int ModuleId { get; set; }
-        public Module Module { get; set; }
+        public virtual Module Module { get; set; }
     }
 }

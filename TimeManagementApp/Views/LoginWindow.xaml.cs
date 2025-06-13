@@ -1,14 +1,15 @@
-﻿using System.Windows;
-using TimeManagementLibrary.Services;
+﻿// LoginWindow.xaml.cs
+using System.Windows;
+using Microsoft.Extensions.DependencyInjection;
 using TimeManagementApp.Views;
-using TimeManagementLibrary;
-using System.Windows.Navigation;
+using TimeManagementLibrary.Services;
 
 namespace TimeManagementApp.Views
 {
     public partial class LoginWindow : Window
     {
         private readonly AuthService _authService;
+        private App App => (App)Application.Current;
 
         public LoginWindow(AuthService authService)
         {
@@ -16,42 +17,31 @@ namespace TimeManagementApp.Views
             _authService = authService;
         }
 
-        private void Login_Click(object sender, RoutedEventArgs e)
+        private async void Login_Click(object sender, RoutedEventArgs e)
         {
             string username = UsernameTextBox.Text;
             string password = PasswordBox.Password;
 
-            var user = _authService.Login(username, password);
-
+            var user = await _authService.Login(username, password);
             if (user != null)
             {
-                var mainWindow = new MainWindow(user); // Pass user to main window
+                // Open MainWindow with logged-in user
+                var mainWindow = App.Services.GetRequiredService<MainWindow>();
+                mainWindow.SetLoggedInUser(user);
                 mainWindow.Show();
-                this.Close();
-                NavigationService.Navigate(new ModulesListPage(loggedInUser.Id));
-
+                Close();
             }
             else
             {
-                MessageTextBlock.Text = "Invalid credentials.";
+                MessageTextBlock.Text = "Login failed. Check credentials.";
             }
         }
 
         private void Register_Click(object sender, RoutedEventArgs e)
         {
-            string username = UsernameTextBox.Text;
-            string password = PasswordBox.Password;
-
-            bool success = _authService.Register(username, password);
-
-            if (success)
-            {
-                MessageTextBlock.Text = "Registration successful. You may now log in.";
-            }
-            else
-            {
-                MessageTextBlock.Text = "Username already exists.";
-            }
+            var wnd = App.Services.GetRequiredService<RegisterWindow>();
+            wnd.Show();
+            Close();
         }
     }
 }

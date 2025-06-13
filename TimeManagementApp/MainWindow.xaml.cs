@@ -5,19 +5,35 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
+using Microsoft.EntityFrameworkCore;
 using TimeManagementApp.Models;
 using TimeManagementApp.ViewModels;
 using TimeManagementLibrary;
 using TimeManagementLibrary.Models;
+using TimeManagementLibrary.Services;
+using Microsoft.EntityFrameworkCore.Sqlite;
+
 
 namespace TimeManagementApp
 {
     public partial class MainWindow : Window
     {
-        public MainWindow(MainViewModel vm)
+        public MainWindow()
         {
             InitializeComponent();
-            DataContext = vm;
+            InitializeWindow();
+        }
+
+        public void InitializeWindow()
+        {
+            // Initialize your dependencies with DbContext options
+            var options = new DbContextOptionsBuilder<TimeManagementDbContext>()
+                .UseSqlite("Data Source=timemanagement.db")
+                .Options;
+
+            var dbContext = new TimeManagementDbContext(options);
+            var dataService = new DataService(dbContext);
+            DataContext = new MainViewModel(dataService);
         }
 
         public void SetLoggedInUser(User user)
@@ -28,8 +44,7 @@ namespace TimeManagementApp
             }
         }
     }
-}
-//private void AddModule_Click(object sender, RoutedEventArgs e)
+}//private void AddModule_Click(object sender, RoutedEventArgs e)
 //{
 //    // Get module details from input fields
 //    string code = txtCode.Text;
